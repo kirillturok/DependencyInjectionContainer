@@ -41,11 +41,14 @@ namespace DependencyInjectionContainer
 
         public void Register(Type @interface, Type implementation, LifeCycle lifeType = LifeCycle.InstancePerDependency, object name = null)
         {
+            #region checkExceptions
             if (@interface == null) throw new ArgumentNullException(nameof(@interface));
             if (implementation == null) throw new ArgumentNullException(nameof(implementation));
             if (!implementation.IsClass) throw new ArgumentException($"{implementation} must be a reference type");
             if (implementation.IsAbstract || implementation.IsInterface)
                 throw new ArgumentException($"{implementation} must be non abstract");
+            #endregion
+
             if (@interface.IsAssignableFrom(implementation) ||
                 implementation.IsGenericTypeDefinition && @interface.IsGenericTypeDefinition &&
                  IsAssignableFromGeneric(implementation, @interface))
