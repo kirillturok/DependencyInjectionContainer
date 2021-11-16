@@ -14,14 +14,14 @@ namespace DependencyInjection.DependencyConfiguration
             DependenciesDictionary = new Dictionary<Type, List<ImplContainer>>();
         }
 
-        public void Register<TDependency, TImplementation>(LifeCycle ttl = LifeCycle.InstancePerDependency,ImplNumber number = ImplNumber.None) 
+        public void Register<TDependency, TImplementation>(ImplNumber number = ImplNumber.None, LifeCycle ttl = LifeCycle.InstancePerDependency) 
             where TDependency : class 
             where TImplementation : TDependency
         {
             Register(typeof(TDependency), typeof(TImplementation), ttl, number);
         }
 
-        public void Register(Type dependencyType, Type implementType, LifeCycle ttl, ImplNumber number = ImplNumber.None)
+        public void Register(Type dependencyType, Type implementType, LifeCycle ttl, ImplNumber number)
         {
             if (!IsDependency(implementType, dependencyType))
             {

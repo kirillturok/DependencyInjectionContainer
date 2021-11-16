@@ -8,9 +8,9 @@ namespace DependencyInjection.DependencyConfiguration.ImplementationData
 {
     public enum ImplNumber
     {
-        None = 1,
-        First = 2,
-        Second = 4,
+        None,
+        First,
+        Second,
         Any = None | First | Second,
     }
 }

@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using DependencyInjection.DependencyConfiguration;
 using DependencyInjection.DependencyConfiguration.ImplementationData;
+using DependencyInjection.DependencyProvider;
 
 namespace TestProject1
 {
@@ -17,11 +18,11 @@ namespace TestProject1
             dependencies.Register<IStrange, Strange>();
 
             dependencies1 = new DependencyConfig();
-            dependencies1.Register<IInterface, Class>();
-            dependencies1.Register<IInterface, Class2>();
+            dependencies1.Register<IInterface, Class>(ImplNumber.First);
+            dependencies1.Register<IInterface, Class2>(ImplNumber.Second);
             dependencies1.Register<IStrange, Strange>();
         }
-
+        /*
         [Test]
         public void RegisteringDependencies()
         {
@@ -44,6 +45,36 @@ namespace TestProject1
             Assert.AreEqual(type1, typeof(Class), "Another type of class Class in container.");
             Assert.AreEqual(type2, typeof(Class2), "Another type of class Class2 in container.");
             Assert.AreEqual(num, 2,"Dependency dictionary has another number of keys.");
+        }
+
+        [Test]
+        public void SimpleDependencyProvider()
+        {
+            var provider = new DependencyProvider(dependencies);
+            var result = provider.Resolve<IStrange>();
+            var innerInterface = ((Strange)result).iInterface;
+            Assert.AreEqual(result.GetType(), typeof(Strange),"Wrong type of resolving result.");
+            Assert.AreEqual(innerInterface == null, false, "Error in creating an instance of dependency.");
+            Assert.AreEqual(innerInterface.GetType(), typeof(Class), "Wrong type of created dependency.");
+        }
+
+        [Test]
+        public void DoubleDependencyProvider()
+        {
+            var provider = new DependencyProvider(dependencies1);
+            var result = provider.Resolve<IStrange>();
+            var innerInterface = ((Strange)result).iInterface;
+            Assert.AreEqual(innerInterface.GetType(),typeof(Class2),"Wrong type of created instance.");
+        }*/
+
+        [Test]
+        public void ImplNumberProvider()
+        {
+            var provider = new DependencyProvider(dependencies1);
+            var result = provider.Resolve<IStrange>(ImplNumber.First);
+            var result1 = provider.Resolve<IStrange>(ImplNumber.Second);
+            var innerInterface = ((Strange)result).iInterface;
+
         }
     }
 
@@ -77,11 +108,11 @@ namespace TestProject1
 
     class Strange : IStrange
     {
-        IInterface iInterface;
+        public IInterface iInterface;
 
         public Strange(IInterface iInterface)
         {
-
+            this.iInterface = iInterface;
         }
 
         public void mth1()
