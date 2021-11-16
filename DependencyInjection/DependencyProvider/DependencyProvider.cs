@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using DependencyInjection.DependencyConfiguration;
 using DependencyInjection.DependencyConfiguration.ImplementationData;
 
@@ -50,8 +48,7 @@ namespace DependencyInjection.DependencyProvider
             return result;
         }
 
-        private object ResolveNonIEnumerable(Type implType, LifeCycle ttl, Type dependencyType,
-            ImplNumber number)
+        private object ResolveNonIEnumerable(Type implType, LifeCycle ttl, Type dependencyType,ImplNumber number)
         {
             if (ttl != LifeCycle.Singleton)
             {

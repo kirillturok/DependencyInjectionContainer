@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using DependencyInjection.DependencyConfiguration.ImplementationData;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DependencyInjection.DependencyConfiguration
 {
@@ -13,7 +11,7 @@ namespace DependencyInjection.DependencyConfiguration
 
         public DependencyConfig()
         {
-            this.DependenciesDictionary = new Dictionary<Type, List<ImplContainer>>();
+            DependenciesDictionary = new Dictionary<Type, List<ImplContainer>>();
         }
 
         public void Register<TDependency, TImplementation>(LifeCycle ttl,ImplNumber number = ImplNumber.None) 
