@@ -14,7 +14,7 @@ namespace DependencyInjection.DependencyConfiguration
             DependenciesDictionary = new Dictionary<Type, List<ImplContainer>>();
         }
 
-        public void Register<TDependency, TImplementation>(LifeCycle ttl,ImplNumber number = ImplNumber.None) 
+        public void Register<TDependency, TImplementation>(LifeCycle ttl = LifeCycle.InstancePerDependency,ImplNumber number = ImplNumber.None) 
             where TDependency : class 
             where TImplementation : TDependency
         {
