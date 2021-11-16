@@ -7,7 +7,6 @@ namespace DependencyInjectionContainer
     public class DependencyConfiguration
     {
         private readonly Dictionary<Type, List<Dependency>> _dependencies = new Dictionary<Type, List<Dependency>>();
-
         private readonly List<Type> _excludedTypes = new List<Type>();
 
         internal void ExcludeType(Type type)
@@ -73,10 +72,10 @@ namespace DependencyInjectionContainer
         {
             for (var baseType = type; baseType != null; baseType = baseType.BaseType)
                 yield return baseType;
-
-            var interfaceTypes =
+            var interfaceTypes = type.GetInterfaces();
+            /*var interfaceTypes =
                 from Type interfaceType in type.GetInterfaces()
-                select interfaceType;
+                select interfaceType;*/
 
             foreach (var interfaceType in interfaceTypes)
                 yield return interfaceType;
@@ -91,20 +90,6 @@ namespace DependencyInjectionContainer
             return baseTypes
                 .Select(GetTypeDefinition)
                 .Contains(GetTypeDefinition(interfaceType));
-        }
-
-        public void Register<TInterface, TImplementation>(LifeCycle lifeType = LifeCycle.InstancePerDependency)
-            where TInterface : class
-            where TImplementation : class, TInterface
-        {
-            Register(typeof(TInterface), typeof(TImplementation), lifeType);
-        }
-
-        public void RegisterSingleton<TInterface, TImplementation>()
-            where TInterface : class
-            where TImplementation : class, TInterface
-        {
-            Register(typeof(TInterface), typeof(TImplementation), LifeCycle.Singleton);
         }
 
         public bool TryGet(Type @interface, out Dependency dependency)
