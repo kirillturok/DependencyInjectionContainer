@@ -19,9 +19,10 @@ namespace TestProject1
             dependencies.Register<IStrange, Strange>();
 
             dependencies1 = new DependencyConfig();
-            dependencies1.Register<IInterface, Class>(LifeCycle.Singleton,ImplNumber.First);
-            dependencies1.Register<IInterface, Class2>(LifeCycle.Singleton,ImplNumber.Second);
-            dependencies1.Register<IStrange, Strange>();
+            dependencies1.Register<IInterface, Class>();
+            dependencies1.Register<IInterface, Class2>();
+            dependencies1.Register<IStrange, Strange>(LifeCycle.InstancePerDependency,ImplNumber.First);
+            dependencies1.Register<IStrange, Strange2>(LifeCycle.InstancePerDependency,ImplNumber.Second);
         }
         
         [Test]
@@ -64,7 +65,7 @@ namespace TestProject1
         {
             var provider = new DependencyProvider(dependencies1);
             var result = provider.Resolve<IStrange>();
-            var innerInterface = ((Strange)result).iInterface;
+            var innerInterface = ((Strange2)result).iInterface;
             Assert.AreEqual(innerInterface.GetType(),typeof(Class2),"Wrong type of created instance.");
         }
 
@@ -96,16 +97,16 @@ namespace TestProject1
             Assert.IsTrue(b1, "Different objects for singleton object.");
             Assert.IsFalse(b2, "The same object using InstancePerDependency");
         }
-        /*
+        
         [Test]
         public void ImplNumberProvider()
         {
             var provider = new DependencyProvider(dependencies1);
             var result = provider.Resolve<IStrange>(ImplNumber.First);
             var result1 = provider.Resolve<IStrange>(ImplNumber.Second);
-            var innerInterface = ((Strange)result).iInterface;
-
-        }*/
+            Assert.AreEqual(result.GetType(), typeof(Strange), "Wrong type for First dependency.");
+            Assert.AreEqual(result1.GetType(), typeof(Strange2), "Wrong type for Second dependency");
+        }
     }
 
     interface IInterface
@@ -141,6 +142,26 @@ namespace TestProject1
         public IInterface iInterface;
 
         public Strange(IInterface iInterface)
+        {
+            this.iInterface = iInterface;
+        }
+
+        public void mth1()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void mth2()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    class Strange2 : IStrange
+    {
+        public IInterface iInterface;
+
+        public Strange2(IInterface iInterface)
         {
             this.iInterface = iInterface;
         }

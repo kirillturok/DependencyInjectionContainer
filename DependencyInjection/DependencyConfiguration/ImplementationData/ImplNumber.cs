@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace DependencyInjection.DependencyConfiguration.ImplementationData
 {
+    [Flags]
     public enum ImplNumber
     {
         None,
