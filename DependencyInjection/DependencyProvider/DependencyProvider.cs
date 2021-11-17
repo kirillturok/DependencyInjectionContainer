@@ -13,7 +13,7 @@ namespace DependencyInjection.DependencyProvider
     public class DependencyProvider
     {
         private readonly DependencyConfig _configuration;
-        private readonly Dictionary<Type, List<SingletonContainer>> _singletons;
+        public readonly Dictionary<Type, List<SingletonContainer>> _singletons;
 
         public DependencyProvider(DependencyConfig configuration)
         {
@@ -58,18 +58,17 @@ namespace DependencyInjection.DependencyProvider
                 return CreateInstance(implType);
             }
 
-            lock (this._configuration)
+            ////////
+            if (IsInSingletons(dependencyType, implType, number))
             {
-                if (IsInSingletons(dependencyType, implType, number))
-                {
-                    return this._singletons[dependencyType]
-                        .Find(singletonContainer => number.HasFlag(singletonContainer.ImplNumber)).Instance;
-                }
-
-                var result = CreateInstance(implType);
-                this.AddToSingletons(dependencyType, result, number);
-                return result;
+                return this._singletons[dependencyType]
+                    .Find(singletonContainer => number.HasFlag(singletonContainer.ImplNumber)).Instance;
             }
+
+            var result = CreateInstance(implType);
+            this.AddToSingletons(dependencyType, result, number);
+            return result;
+            ///
         }
 
         private ImplContainer GetImplContainerByDependencyType(Type dependencyType, ImplNumber number)
@@ -146,7 +145,7 @@ namespace DependencyInjection.DependencyProvider
             return implementationList;
         }
 
-        private ImplContainer GetImplementationsContainerLast(Type dependencyType,ImplNumber number)
+        private ImplContainer GetImplementationsContainerLast(Type dependencyType, ImplNumber number)
         {
             if (this._configuration.DependenciesDictionary.ContainsKey(dependencyType))
             {

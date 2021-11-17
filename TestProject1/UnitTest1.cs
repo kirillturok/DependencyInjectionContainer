@@ -2,6 +2,7 @@ using NUnit.Framework;
 using DependencyInjection.DependencyConfiguration;
 using DependencyInjection.DependencyConfiguration.ImplementationData;
 using DependencyInjection.DependencyProvider;
+using LifeCycle = DependencyInjection.DependencyConfiguration.ImplementationData.LifeCycle;
 
 namespace TestProject1
 {
@@ -18,11 +19,11 @@ namespace TestProject1
             dependencies.Register<IStrange, Strange>();
 
             dependencies1 = new DependencyConfig();
-            dependencies1.Register<IInterface, Class>(ImplNumber.First);
-            dependencies1.Register<IInterface, Class2>(ImplNumber.Second);
+            dependencies1.Register<IInterface, Class>(LifeCycle.Singleton,ImplNumber.First);
+            dependencies1.Register<IInterface, Class2>(LifeCycle.Singleton,ImplNumber.Second);
             dependencies1.Register<IStrange, Strange>();
         }
-        /*
+        
         [Test]
         public void RegisteringDependencies()
         {
@@ -65,8 +66,37 @@ namespace TestProject1
             var result = provider.Resolve<IStrange>();
             var innerInterface = ((Strange)result).iInterface;
             Assert.AreEqual(innerInterface.GetType(),typeof(Class2),"Wrong type of created instance.");
-        }*/
+        }
 
+        [Test]
+        public void SingletonObj()
+        {
+            var dep1 = new DependencyConfig();
+            dep1.Register<IInterface, Class>(LifeCycle.Singleton);
+            dep1.Register<IStrange, Strange>(LifeCycle.Singleton);
+            var provider = new DependencyProvider(dep1);
+            var obj11 = provider.Resolve<IStrange>();
+            var obj12 = provider.Resolve<IStrange>();
+            var b1 = obj11 == obj12;
+
+            int count1 = provider._singletons.Count;
+            Assert.AreEqual(count1, 2, "Wrong number of Singleton objects in Dictionary for Singleton");
+
+            var dep2 = new DependencyConfig();
+            dep2.Register<IInterface, Class>(LifeCycle.InstancePerDependency);
+            dep2.Register<IStrange, Strange>(LifeCycle.InstancePerDependency);
+            var provider2 = new DependencyProvider(dep2);
+            var obj21 = provider2.Resolve<IStrange>();
+            var obj22 = provider2.Resolve<IStrange>();
+            var b2 = obj21 == obj22;
+
+            int count2 = provider2._singletons.Count;
+            Assert.AreEqual(count2, 0, "Wrong number of Singleton objects in Dictionary for InstancePerDependency");
+
+            Assert.IsTrue(b1, "Different objects for singleton object.");
+            Assert.IsFalse(b2, "The same object using InstancePerDependency");
+        }
+        /*
         [Test]
         public void ImplNumberProvider()
         {
@@ -75,7 +105,7 @@ namespace TestProject1
             var result1 = provider.Resolve<IStrange>(ImplNumber.Second);
             var innerInterface = ((Strange)result).iInterface;
 
-        }
+        }*/
     }
 
     interface IInterface
